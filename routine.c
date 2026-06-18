@@ -1,0 +1,82 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   routine.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhaizan <mhaizan@student.42amman.com>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/18 00:00:00 by mhaizan           #+#    #+#             */
+/*   Updated: 2026/06/18 17:54:30 by mhaizan          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo.h"
+
+static void	*philo_routine(void *arg)
+{
+	t_philo	*philo;
+
+	philo = (t_philo *)arg;
+	if (philo->data->num_philos > 1 && philo->id % 2 == 0)
+		ft_usleep(philo->data->time_to_eat / 2, philo->data);
+	while (!is_sim_over(philo->data))
+	{
+		philo_eat(philo);
+		if (is_sim_over(philo->data))
+			break ;
+		philo_sleep(philo);
+		if (is_sim_over(philo->data))
+			break ;
+		philo_think(philo);
+	}
+	return (NULL);
+}
+
+static void	join_all(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->num_philos)
+		pthread_join(data->philos[i++].thread, NULL);
+}
+
+static int	create_philos(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->num_philos)
+	{
+		if (pthread_create(&data->philos[i].thread, NULL,
+				philo_routine, &data->philos[i]) != 0)
+		{
+			pthread_mutex_lock(&data->print_mutex);
+			data->sim_over = 1;
+			pthread_mutex_unlock(&data->print_mutex);
+			while (--i >= 0)
+				pthread_join(data->philos[i].thread, NULL);
+			return (0);
+		}
+		i++;
+	}
+	return (1);
+}
+
+void	start_simulation(t_data *data)
+{
+	pthread_t	monitor;
+
+	if (!create_philos(data))
+		return ;
+	if (pthread_create(&monitor, NULL, monitor_routine, data) != 0)
+	{
+		pthread_mutex_lock(&data->print_mutex);
+		data->sim_over = 1;
+		pthread_mutex_unlock(&data->print_mutex);
+		join_all(data);
+		return ;
+	}
+	pthread_join(monitor, NULL);
+	join_all(data);
+}
