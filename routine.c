@@ -63,20 +63,21 @@ static int	create_philos(t_data *data)
 	return (1);
 }
 
-void	start_simulation(t_data *data)
+int	start_simulation(t_data *data)
 {
 	pthread_t	monitor;
 
 	if (!create_philos(data))
-		return ;
+		return (0);
 	if (pthread_create(&monitor, NULL, monitor_routine, data) != 0)
 	{
 		pthread_mutex_lock(&data->print_mutex);
 		data->sim_over = 1;
 		pthread_mutex_unlock(&data->print_mutex);
 		join_all(data);
-		return ;
+		return (0);
 	}
 	pthread_join(monitor, NULL);
 	join_all(data);
+	return (1);
 }
