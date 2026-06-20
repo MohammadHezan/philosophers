@@ -24,7 +24,12 @@ int	main(int argc, char **argv)
 		write(2, "Error\n", 6);
 		return (1);
 	}
-	start_simulation(&data);
+	if (!start_simulation(&data))
+	{
+		write(2, "Error\n", 6);
+		destroy_data(&data);
+		return (1);
+	}
 	destroy_data(&data);
 	return (0);
 }
