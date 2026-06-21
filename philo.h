@@ -28,6 +28,7 @@ typedef struct s_philo
 	int				meals_eaten;
 	long long		last_meal_time;
 	pthread_t		thread;
+	pthread_mutex_t	meal_mutex;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
 	t_data			*data;
@@ -41,6 +42,7 @@ typedef struct s_data
 	long long		time_to_sleep;
 	int				must_eat_count;
 	int				sim_over;
+	int				ready;
 	long long		start_time;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print_mutex;
@@ -53,7 +55,7 @@ int			init_data(t_data *data);
 
 void		destroy_data(t_data *data);
 
-void		start_simulation(t_data *data);
+int			start_simulation(t_data *data);
 
 void		philo_eat(t_philo *philo);
 void		philo_sleep(t_philo *philo);

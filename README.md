@@ -53,5 +53,4 @@ Run the `philo` executable with the following mandatory arguments:
 **AI Usage Report:**
 Artificial Intelligence was utilized lightly as a debugging and formatting tool to streamline the development process. Specifically, AI assisted with:
 - Checking code formatting to ensure compliance with the strict 42 Norminette standards.
-- Identifying and explaining minor edge-case scheduling delays caused by the WSL environment.
-- Generating the initial template for this README file.
+- Generating the initial template for README file.

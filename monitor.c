@@ -17,12 +17,12 @@ static int	philo_is_dead(t_data *data, int i, long long *ts)
 	long long	elapsed;
 	int			dead;
 
-	pthread_mutex_lock(&data->data_mutex);
+	pthread_mutex_lock(&data->philos[i].meal_mutex);
 	elapsed = get_time_ms() - data->philos[i].last_meal_time;
-	dead = (elapsed >= data->time_to_die);
+	dead = (elapsed > data->time_to_die);
 	if (dead)
 		*ts = get_time_ms() - data->start_time;
-	pthread_mutex_unlock(&data->data_mutex);
+	pthread_mutex_unlock(&data->philos[i].meal_mutex);
 	return (dead);
 }
 
@@ -32,18 +32,18 @@ static int	all_ate_enough(t_data *data)
 
 	if (data->must_eat_count == -1)
 		return (0);
-	pthread_mutex_lock(&data->data_mutex);
 	i = 0;
 	while (i < data->num_philos)
 	{
+		pthread_mutex_lock(&data->philos[i].meal_mutex);
 		if (data->philos[i].meals_eaten < data->must_eat_count)
 		{
-			pthread_mutex_unlock(&data->data_mutex);
+			pthread_mutex_unlock(&data->philos[i].meal_mutex);
 			return (0);
 		}
+		pthread_mutex_unlock(&data->philos[i].meal_mutex);
 		i++;
 	}
-	pthread_mutex_unlock(&data->data_mutex);
 	return (1);
 }
 
@@ -53,8 +53,10 @@ static int	check_death(t_data *data, int i)
 
 	if (!philo_is_dead(data, i, &ts))
 		return (0);
-	pthread_mutex_lock(&data->print_mutex);
+	pthread_mutex_lock(&data->data_mutex);
 	data->sim_over = 1;
+	pthread_mutex_unlock(&data->data_mutex);
+	pthread_mutex_lock(&data->print_mutex);
 	printf("%lld %d died\n", ts, data->philos[i].id);
 	pthread_mutex_unlock(&data->print_mutex);
 	return (1);
@@ -64,9 +66,9 @@ static int	check_all_ate(t_data *data)
 {
 	if (!all_ate_enough(data))
 		return (0);
-	pthread_mutex_lock(&data->print_mutex);
+	pthread_mutex_lock(&data->data_mutex);
 	data->sim_over = 1;
-	pthread_mutex_unlock(&data->print_mutex);
+	pthread_mutex_unlock(&data->data_mutex);
 	return (1);
 }
 

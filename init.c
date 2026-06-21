@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-static void	fill_data(t_data *data, char **argv, int argc)
+static int	fill_data(t_data *data, char **argv, int argc)
 {
 	data->num_philos = (int)ft_atoll(argv[1]);
 	data->time_to_die = ft_atoll(argv[2]);
@@ -21,6 +21,10 @@ static void	fill_data(t_data *data, char **argv, int argc)
 	data->must_eat_count = -1;
 	if (argc == 6)
 		data->must_eat_count = (int)ft_atoll(argv[5]);
+	if (data->num_philos > 200 || data->time_to_die < 60
+		|| data->time_to_eat < 60 || data->time_to_sleep < 60)
+		return (0);
+	return (1);
 }
 
 int	parse_args(int argc, char **argv, t_data *data)
@@ -44,7 +48,11 @@ int	parse_args(int argc, char **argv, t_data *data)
 		}
 		i++;
 	}
-	fill_data(data, argv, argc);
+	if (!fill_data(data, argv, argc))
+	{
+		write(2, "Error\n", 6);
+		return (0);
+	}
 	return (1);
 }
 
@@ -84,6 +92,7 @@ static int	init_philos(t_data *data)
 		data->philos[i].id = i + 1;
 		data->philos[i].meals_eaten = 0;
 		data->philos[i].last_meal_time = data->start_time;
+		pthread_mutex_init(&data->philos[i].meal_mutex, NULL);
 		data->philos[i].data = data;
 		data->philos[i].left_fork = &data->forks[i];
 		data->philos[i].right_fork
@@ -96,6 +105,7 @@ static int	init_philos(t_data *data)
 int	init_data(t_data *data)
 {
 	data->sim_over = 0;
+	data->ready = 0;
 	data->start_time = get_time_ms();
 	if (pthread_mutex_init(&data->print_mutex, NULL) != 0)
 		return (0);
