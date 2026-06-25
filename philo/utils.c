@@ -46,7 +46,7 @@ void	print_state(t_philo *philo, const char *state)
 	long long	ts;
 
 	pthread_mutex_lock(&philo->data->print_mutex);
-	if (!is_sim_over(philo->data))
+	if (!philo->data->sim_over)
 	{
 		ts = get_time_ms() - philo->data->start_time;
 		printf("%lld %d %s\n", ts, philo->id, state);
@@ -58,8 +58,8 @@ int	is_sim_over(t_data *data)
 {
 	int	result;
 
-	pthread_mutex_lock(&data->data_mutex);
+	pthread_mutex_lock(&data->print_mutex);
 	result = data->sim_over;
-	pthread_mutex_unlock(&data->data_mutex);
+	pthread_mutex_unlock(&data->print_mutex);
 	return (result);
 }

@@ -26,8 +26,9 @@ static void	*philo_routine(void *arg)
 		usleep(100);
 	}
 	pthread_mutex_unlock(&philo->data->data_mutex);
-	if (philo->data->num_philos > 1 && philo->id % 2 == 0)
-		ft_usleep(philo->data->time_to_eat / 2, philo->data);
+	
+	if (philo->id % 2 == 0)
+		ft_usleep(philo->data->time_to_eat / 10 + 1, philo->data);
 	while (!is_sim_over(philo->data))
 	{
 		philo_eat(philo);
@@ -39,6 +40,23 @@ static void	*philo_routine(void *arg)
 		philo_think(philo);
 	}
 	return (NULL);
+}
+
+static int	handle_single_philo(t_data *data)
+{
+	long long	ts;
+
+	data->start_time = get_time_ms();
+	data->philos[0].last_meal_time = data->start_time;
+	pthread_mutex_lock(&data->philos[0].left_fork->mutex);
+	print_state(&data->philos[0], "has taken a fork");
+	ft_usleep(data->time_to_die, data);
+	ts = get_time_ms() - data->start_time;
+	pthread_mutex_lock(&data->print_mutex);
+	printf("%lld 1 died\n", ts);
+	pthread_mutex_unlock(&data->print_mutex);
+	pthread_mutex_unlock(&data->philos[0].left_fork->mutex);
+	return (1);
 }
 
 static void	join_all(t_data *data)
@@ -94,6 +112,8 @@ int	start_simulation(t_data *data)
 {
 	pthread_t	monitor;
 
+	if (data->num_philos == 1)
+		return (handle_single_philo(data));
 	if (!create_philos(data))
 		return (0);
 	set_start_time(data);

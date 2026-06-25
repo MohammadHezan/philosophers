@@ -53,10 +53,8 @@ static int	check_death(t_data *data, int i)
 
 	if (!philo_is_dead(data, i, &ts))
 		return (0);
-	pthread_mutex_lock(&data->data_mutex);
-	data->sim_over = 1;
-	pthread_mutex_unlock(&data->data_mutex);
 	pthread_mutex_lock(&data->print_mutex);
+	data->sim_over = 1;
 	printf("%lld %d died\n", ts, data->philos[i].id);
 	pthread_mutex_unlock(&data->print_mutex);
 	return (1);
@@ -66,9 +64,9 @@ static int	check_all_ate(t_data *data)
 {
 	if (!all_ate_enough(data))
 		return (0);
-	pthread_mutex_lock(&data->data_mutex);
+	pthread_mutex_lock(&data->print_mutex);
 	data->sim_over = 1;
-	pthread_mutex_unlock(&data->data_mutex);
+	pthread_mutex_unlock(&data->print_mutex);
 	return (1);
 }
 

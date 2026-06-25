@@ -27,7 +27,7 @@ void	destroy_data(t_data *data)
 	{
 		i = 0;
 		while (i < data->num_philos)
-			pthread_mutex_destroy(&data->forks[i++]);
+			pthread_mutex_destroy(&data->forks[i++].mutex);
 		free(data->forks);
 	}
 	pthread_mutex_destroy(&data->print_mutex);

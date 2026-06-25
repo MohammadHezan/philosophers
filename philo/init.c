@@ -21,8 +21,7 @@ static int	fill_data(t_data *data, char **argv, int argc)
 	data->must_eat_count = -1;
 	if (argc == 6)
 		data->must_eat_count = (int)ft_atoll(argv[5]);
-	if (data->num_philos > 200 || data->time_to_die < 60
-		|| data->time_to_eat < 60 || data->time_to_sleep < 60)
+	if (data->num_philos > 200)
 		return (0);
 	return (1);
 }
@@ -60,16 +59,17 @@ static int	init_forks(t_data *data)
 {
 	int	i;
 
-	data->forks = malloc(sizeof(pthread_mutex_t) * data->num_philos);
+	data->forks = malloc(sizeof(t_fork) * data->num_philos);
 	if (!data->forks)
 		return (0);
 	i = 0;
 	while (i < data->num_philos)
 	{
-		if (pthread_mutex_init(&data->forks[i], NULL) != 0)
+		data->forks[i].id = i;
+		if (pthread_mutex_init(&data->forks[i].mutex, NULL) != 0)
 		{
 			while (--i >= 0)
-				pthread_mutex_destroy(&data->forks[i]);
+				pthread_mutex_destroy(&data->forks[i].mutex);
 			free(data->forks);
 			data->forks = NULL;
 			return (0);
