@@ -62,6 +62,7 @@ int			init_data(t_data *data);
 void		destroy_data(t_data *data);
 
 int			start_simulation(t_data *data);
+int			handle_single_philo(t_data *data);
 
 void		philo_eat(t_philo *philo);
 void		philo_sleep(t_philo *philo);

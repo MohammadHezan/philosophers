@@ -63,3 +63,20 @@ void	philo_think(t_philo *philo)
 	if (t_think > 0)
 		ft_usleep(t_think, philo->data);
 }
+
+int	handle_single_philo(t_data *data)
+{
+	long long	ts;
+
+	data->start_time = get_time_ms();
+	data->philos[0].last_meal_time = data->start_time;
+	pthread_mutex_lock(&data->philos[0].left_fork->mutex);
+	print_state(&data->philos[0], "has taken a fork");
+	ft_usleep(data->time_to_die, data);
+	ts = get_time_ms() - data->start_time;
+	pthread_mutex_lock(&data->print_mutex);
+	printf("%lld 1 died\n", ts);
+	pthread_mutex_unlock(&data->print_mutex);
+	pthread_mutex_unlock(&data->philos[0].left_fork->mutex);
+	return (1);
+}
