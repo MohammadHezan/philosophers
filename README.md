@@ -1,4 +1,4 @@
-*This project was developed as part of the 42 curriculum by mhaizan.*
+*This project has been created as part of the 42 curriculum by mhaizan.*
 
 # 🍝 42 Philosophers - Concurrency & Synchronization
 
@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/School-42-black.svg" alt="42 School" />
 </p>
 
-## 📖 Overview
+## Description
 
 The **Philosophers** project is a practical exercise in managing concurrent programming, based on the classic "Dining Philosophers" problem by Edsger Dijkstra. It serves as an introduction to the complexities of multi-threading, shared memory, and synchronization primitives.
 
@@ -40,7 +40,7 @@ This implementation is highly optimized to meet the strict timing and synchroniz
 
 ---
 
-## 🚀 Usage Guide
+## Instructions
 
 ### Compilation
 A `Makefile` is provided in the `philo/` directory.
@@ -92,7 +92,7 @@ Run the program with the following arguments:
 
 ---
 
-## 📚 Study Resources
+## Resources
 
 - [Code Vault: pthreads](https://www.youtube.com/playlist?list=PLGU1kcPKHMKi41Py2kqxdvqYE3M9VhCHe) - An essential YouTube playlist for understanding threads and mutexes.
 - [Philosophers Visualizer](https://rom98759.github.io/Philosophers-visualizer/) - A great tool to visualize the problem and test argument outcomes.
